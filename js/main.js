@@ -7,11 +7,11 @@ window.onload = setMap();
 //set up the map
 function setMap(){
 	//map frame dimensions
-    var width = 960,
+	var width = 960, //map frame dimensions
         height = 460;
 
     //create new svg container for the map
-    var map = d3.select("body")
+	var map = d3.select("body")
         .append("svg")
         .attr("class", "map")
         .attr("width", width)
@@ -19,8 +19,7 @@ function setMap(){
 
 	//create Albers equal area conic projection centered on Chicago, Illinois
 	var projection = d3.geo.albers()
-		//set the central coordinates
-        .center([0, 41.88])
+        .center([0, 41.88]) //set the central coordinates
         //set rotation 
         .rotate([87.623, 0, 0])
         //these are our standard parallels
@@ -29,19 +28,18 @@ function setMap(){
         .scale(50000)
         .translate([width / 2, height / 2]);
         
-   //this is our path generator function
-	var path = d3.geo.path()
-        .projection(projection);
-    //queue.js for data loading
-	var q = d3_queue.queue();
+   
+	var path = d3.geo.path() //this is our path generator function
+        .projection(projection);    
+	var q = d3_queue.queue(); //queue.js for data loading
 	q
-         //get data from these files
+         
 		.defer(d3.csv, "data/crimeTotalsFinal.csv") //load attributes from csv
 		.defer(d3.json, "data/Illinois_WGS_1984.topojson") //load background spatial data
 		.defer(d3.json, "data/commAreas_WGS_1984.topojson") //load choropleth spatial data
 		.await(callback);
-    //once data loaded, callback function 
-    //takes 4 parameters (including the above three data sources)    
+	//once data loaded, callback function 
+    //takes 4 parameters (including the above three data sources)		    
 	function callback(error, csvData, background, communities){
 		console.log(error);
         console.log(csvData);
