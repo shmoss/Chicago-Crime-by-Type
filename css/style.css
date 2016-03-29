@@ -1,0 +1,26 @@
+.map {
+	border: 3px solid #999;
+	margin: 10px 0 0 20px;
+}
+
+.regions {
+	stroke: white;
+	stroke-width: 1px;
+	stroke-linecap: round;
+}
+
+.state {
+	fill: grey;
+	stroke: #CCC;
+	stroke-width: 2px;
+}
+
+.gratBackground {
+	fill: #D5E3FF;
+}
+
+.gratLines {
+	fill: none;
+	stroke: #999;
+	stroke-width: 1px;
+}
