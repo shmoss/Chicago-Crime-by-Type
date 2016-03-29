@@ -19,7 +19,6 @@ function setMap(){
 
 	//create Albers equal area conic projection centered on Chicago, Illinois
 	var projection = d3.geo.albers()
-		// central coordinates
         .center([0, 41.88]) 
         //set rotation 
         .rotate([87.623, 0, 0])
@@ -43,15 +42,16 @@ function setMap(){
 	//once data is loaded, callback function
 	// four parameters		    
 	function callback(error, csvData, background, communities){
-		console.log(error);
+		console.log(error)
         console.log(csvData);
         console.log(background);
         console.log(communities);
         
-        //create graticule		
+        //create graticule background		
 		var graticule = d3.geo.graticule()
-			//place graticule lines every 5 degrees of longitude and latitude
-            .step([0.5, 0.5]); 
+			//place graticule every 5 degrees of long/lat			
+			.step([0.5, 0.5]);
+             
         
         //create graticule background
         var gratBackground = map.append("path")
@@ -65,7 +65,7 @@ function setMap(){
         //create graticule lines
         //select graticule elements that will be created
         var gratLines = map.selectAll(".gratLines") 
-        	//bind graticule lines to each element to be created
+        	//bind graticule lines to each element to be created     
             .data(graticule.lines())
             //create an element for each datum 
             .enter() 
@@ -76,7 +76,8 @@ function setMap(){
             //project graticule lines
             .attr("d", path); 
 		
-		//translate community area and Illinois TopoJSON				
+		
+		//translate Illinois and community area TOPOjson		
         var backgroundState = topojson.feature(background, background.objects.Illinois_WGS1984),
 		   communityAreas = topojson.feature(communities, communities.objects.commAreas_WGS_1984).features;                       
         //add Illinois to map
