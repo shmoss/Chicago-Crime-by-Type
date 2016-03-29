@@ -7,10 +7,10 @@ window.onload = setMap();
 //set up the map
 function setMap(){
 	//map frame dimensions
-	var width = 960, //map frame dimensions
+	var width = 960, 
         height = 460;
 
-    //create new svg container for the map
+	//create new svg container for the map
 	var map = d3.select("body")
         .append("svg")
         .attr("class", "map")
@@ -19,7 +19,8 @@ function setMap(){
 
 	//create Albers equal area conic projection centered on Chicago, Illinois
 	var projection = d3.geo.albers()
-        .center([0, 41.88]) //set the central coordinates
+		//set the central coordinates
+        .center([0, 41.88]) 
         //set rotation 
         .rotate([87.623, 0, 0])
         //these are our standard parallels
@@ -28,10 +29,11 @@ function setMap(){
         .scale(50000)
         .translate([width / 2, height / 2]);
         
-   
-	var path = d3.geo.path() //this is our path generator function
-        .projection(projection);    
-	var q = d3_queue.queue(); //queue.js for data loading
+   	//this is our path generator function
+	var path = d3.geo.path() 
+        .projection(projection);
+    //queue.js for data loading        
+	var q = d3_queue.queue(); 
 	q
          
 		.defer(d3.csv, "data/crimeTotalsFinal.csv") //load attributes from csv
@@ -74,8 +76,8 @@ function setMap(){
             //project graticule lines
             .attr("d", path); 
 		
-	   //translate community area and Illinois TopoJSON
-       var backgroundState = topojson.feature(background, background.objects.Illinois_WGS1984),
+		//translate community area and Illinois TopoJSON				
+        var backgroundState = topojson.feature(background, background.objects.Illinois_WGS1984),
 		   communityAreas = topojson.feature(communities, communities.objects.commAreas_WGS_1984).features;                       
         //add Illinois to map
         var state = map.append("path")
