@@ -8,18 +8,18 @@ window.onload = setMap();
 function setMap(){
 	//map frame dimensions
 	var width = 960, 
-        height = 460;
+		height = 460;	
 
 	//create new svg container for the map
 	var map = d3.select("body")
-        .append("svg")
-        .attr("class", "map")
-        .attr("width", width)
+		.append("svg")
+		.attr("class", "map")
+		.attr("width", width)
         .attr("height", height);
-
+		
 	//create Albers equal area conic projection centered on Chicago, Illinois
 	var projection = d3.geo.albers()
-        .center([0, 41.88]) 
+		.center([0, 41.88]) 
         //set rotation 
         .rotate([87.623, 0, 0])
         //these are our standard parallels
@@ -28,9 +28,10 @@ function setMap(){
         .scale(50000)
         .translate([width / 2, height / 2]);
         
+        
    	//this is our path generator function
 	var path = d3.geo.path() 
-        .projection(projection);
+    	.projection(projection);    
 	//queue.js for data loading                
 	var q = d3_queue.queue(); 
 	q
@@ -42,15 +43,15 @@ function setMap(){
 	//once data is loaded, callback function
 	// four parameters		    
 	function callback(error, csvData, background, communities){
-        console.log(error);
+		console.log(error);
         console.log(csvData);
         console.log(background);
         console.log(communities);
         
         //create graticule background		
 		var graticule = d3.geo.graticule()
-			//place graticule every 5 degrees of long/lat			
-			.step([0.5, 0.5]);
+			//place graticule every 5 degrees of long/lat
+			.step([0.5, 0.5]);								
  
         //create graticule background
         var gratBackground = map.append("path")
@@ -72,9 +73,7 @@ function setMap(){
             .attr("class", "gratLines") 
             //project graticule lines
             .attr("d", path); 
-		
-		
-				
+								
         var backgroundState = topojson.feature(background, background.objects.Illinois_WGS1984),  //translate Illinois and community area TOPOjson
 		   communityAreas = topojson.feature(communities, communities.objects.commAreas_WGS_1984).features;                       
         //add Illinois to map
