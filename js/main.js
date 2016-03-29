@@ -19,7 +19,7 @@ function setMap(){
 
 	//create Albers equal area conic projection centered on Chicago, Illinois
 	var projection = d3.geo.albers()
-		//set the central coordinates
+		// central coordinates
         .center([0, 41.88]) 
         //set rotation 
         .rotate([87.623, 0, 0])
@@ -32,7 +32,7 @@ function setMap(){
    	//this is our path generator function
 	var path = d3.geo.path() 
         .projection(projection);
-    //queue.js for data loading        
+	//queue.js for data loading                
 	var q = d3_queue.queue(); 
 	q
          
@@ -40,8 +40,8 @@ function setMap(){
 		.defer(d3.json, "data/Illinois_WGS_1984.topojson") //load background spatial data
 		.defer(d3.json, "data/commAreas_WGS_1984.topojson") //load choropleth spatial data
 		.await(callback);
-	//once data loaded, callback function 
-    //takes 4 parameters (including the above three data sources)		    
+	//once data is loaded, callback function
+	// four parameters		    
 	function callback(error, csvData, background, communities){
 		console.log(error);
         console.log(csvData);
