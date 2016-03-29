@@ -42,7 +42,7 @@ function setMap(){
 	//once data is loaded, callback function
 	// four parameters		    
 	function callback(error, csvData, background, communities){
-		console.log(error)
+        console.log(error);
         console.log(csvData);
         console.log(background);
         console.log(communities);
@@ -51,12 +51,10 @@ function setMap(){
 		var graticule = d3.geo.graticule()
 			//place graticule every 5 degrees of long/lat			
 			.step([0.5, 0.5]);
-             
-        
+ 
         //create graticule background
         var gratBackground = map.append("path")
-        	//bind graticule background
-            .datum(graticule.outline()) 
+            .datum(graticule.outline()) //bind graticule background
             //assign class for styling
             .attr("class", "gratBackground") 
             //project graticule
@@ -64,9 +62,8 @@ function setMap(){
         
         //create graticule lines
         //select graticule elements that will be created
-        var gratLines = map.selectAll(".gratLines") 
-        	//bind graticule lines to each element to be created     
-            .data(graticule.lines())
+        var gratLines = map.selectAll(".gratLines")         	     
+            .data(graticule.lines()) //bind graticule lines to each element to be created
             //create an element for each datum 
             .enter() 
             //append each element to the svg as a path element
@@ -77,8 +74,8 @@ function setMap(){
             .attr("d", path); 
 		
 		
-		//translate Illinois and community area TOPOjson		
-        var backgroundState = topojson.feature(background, background.objects.Illinois_WGS1984),
+				
+        var backgroundState = topojson.feature(background, background.objects.Illinois_WGS1984),  //translate Illinois and community area TOPOjson
 		   communityAreas = topojson.feature(communities, communities.objects.commAreas_WGS_1984).features;                       
         //add Illinois to map
         var state = map.append("path")
