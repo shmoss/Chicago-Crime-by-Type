@@ -37,18 +37,19 @@ function setMap(){
 		.defer(d3.json, "data/Illinois_WGS_1984.topojson") //load background spatial data
 		.defer(d3.json, "data/commAreas_WGS_1984.topojson") //load choropleth spatial data
 		.await(callback);
-    //once data loaded, callback function 
-    //takes 4 parameters (including the above three data sources)    
+
+    //once data loaded, callback function
+    //takes 4 parameters (including the above three data sources) 
 	function callback(error, csvData, background, communities){
 		console.log(error);
         console.log(csvData);
         console.log(background);
         console.log(communities);
         
-        //create graticule		
-		var graticule = d3.geo.graticule()
+        //create graticule
+        var graticule = d3.geo.graticule()
 			//place graticule lines every 5 degrees of longitude and latitude
-            .step([0.5, 0.5]); 
+            .step([0.5, 0.5]);	 
         
         //create graticule background
         var gratBackground = map.append("path")
