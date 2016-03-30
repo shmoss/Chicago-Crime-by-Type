@@ -17,7 +17,7 @@ function setMap(){
         .attr("height", height);
 
     //create Albers equal area conic projection centered on Chicago, Illinois
-	var projection = d3.geo.albers()
+    var projection = d3.geo.albers()
 		//set the central coordinates
         .center([0, 41.88])
         //set rotation 
