@@ -52,8 +52,7 @@ function setMap(){
         
         //create graticule background
         var gratBackground = map.append("path")
-    		//bind graticule background
-            .datum(graticule.outline()) 
+            .datum(graticule.outline()) //bind graticule background
             //assign class for styling
             .attr("class", "gratBackground") 
             //project graticule
@@ -62,8 +61,7 @@ function setMap(){
         //create graticule lines
         //select graticule elements that will be created
         var gratLines = map.selectAll(".gratLines") 
-        	//bind graticule lines to each element to be created
-            .data(graticule.lines())
+            .data(graticule.lines()) //bind graticule lines to each element to be created
             //create an element for each datum 
             .enter() 
             //append each element to the svg as a path element
