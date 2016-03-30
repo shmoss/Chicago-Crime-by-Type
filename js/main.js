@@ -10,9 +10,12 @@ function setMap(){
 	var width = 960, height = 460; 
 
 	//create new svg container for the map
-	var map = d3.select("body")
-		s
-		s
+    var map = d3.select("body")
+        .append("svg")
+        .attr("class", "map")
+        .attr("width", width)
+        .attr("height", height);
+
 
 	//create Albers equal area conic projection centered on Chicago, Illinois
 	var projection = d3.geo.albers()
