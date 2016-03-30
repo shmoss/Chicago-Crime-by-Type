@@ -74,8 +74,8 @@ function setMap(){
             //project graticule lines
             .attr("d", path); 
 		
-	   //translate community area and Illinois TopoJSON
-       var backgroundState = topojson.feature(background, background.objects.Illinois_WGS1984),
+	   
+       var backgroundState = topojson.feature(background, background.objects.Illinois_WGS1984),  //translate community area and Illinois TopoJSON
 		   communityAreas = topojson.feature(communities, communities.objects.commAreas_WGS_1984).features;                       
         //add Illinois to map
         var state = map.append("path")
