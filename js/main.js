@@ -18,8 +18,7 @@ function setMap(){
 
     //create Albers equal area conic projection centered on Chicago, Illinois
     var projection = d3.geo.albers()
-		//set coordinates
-        .center([0, 41.88])
+        .center([0, 41.88]) //set coordinates
         //set rotation 
         .rotate([87.623, 0, 0])
         //these are our standard parallels
@@ -29,11 +28,11 @@ function setMap(){
         .translate([width / 2, height / 2]);
         
    //this is our path generator function
-	var path = d3.geo.path()
-        .projection(projection);
+   var path = d3.geo.path()
+       .projection(projection);
     //queue.js for data loading
-	var q = d3_queue.queue();
-	q
+    var q = d3_queue.queue();
+		q
          //get data from these files
 		.defer(d3.csv, "data/crimeTotalsFinal.csv") //load attributes from csv
 		.defer(d3.json, "data/Illinois_WGS_1984.topojson") //load background spatial data
