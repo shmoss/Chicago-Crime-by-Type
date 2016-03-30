@@ -5,9 +5,8 @@ window.onload = setMap();
 
 //set up the map
 function setMap(){
-	//map frame dimensions
-    var width = 960,
-        height = 460;
+    var width = 960, //dimensions
+        height = 460; //dimensions
 
     //create new svg container for the map
     var map = d3.select("body")
@@ -32,7 +31,7 @@ function setMap(){
        .projection(projection);
     //queue.js for data loading
     var q = d3_queue.queue();
-		q
+		q	
          //get data from these files
 		.defer(d3.csv, "data/crimeTotalsFinal.csv") //load attributes from csv
 		.defer(d3.json, "data/Illinois_WGS_1984.topojson") //load background spatial data
