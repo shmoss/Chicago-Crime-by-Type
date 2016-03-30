@@ -31,8 +31,8 @@ function setMap(){
        .projection(projection);
     //queue.js for data loading
     var q = d3_queue.queue();
-		q	
-         //get data from these files
+    q		
+		//get data from these files
 		.defer(d3.csv, "data/crimeTotalsFinal.csv") //load attributes from csv
 		.defer(d3.json, "data/Illinois_WGS_1984.topojson") //load background spatial data
 		.defer(d3.json, "data/commAreas_WGS_1984.topojson") //load choropleth spatial data
@@ -41,7 +41,7 @@ function setMap(){
     //once data loaded, callback function
     //takes 4 parameters (including the above three data sources) 
 	function callback(error, csvData, background, communities){
-		console.log(error)
+		
         console.log(csvData);
         console.log(background);
         console.log(communities);
@@ -52,7 +52,7 @@ function setMap(){
         
         //create graticule background
         var gratBackground = map.append("path")
-        	//bind graticule background
+    		//bind graticule background
             .datum(graticule.outline()) 
             //assign class for styling
             .attr("class", "gratBackground") 
