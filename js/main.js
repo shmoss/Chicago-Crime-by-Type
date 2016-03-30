@@ -41,15 +41,14 @@ function setMap(){
     //once data loaded, callback function
     //takes 4 parameters (including the above three data sources) 
 	function callback(error, csvData, background, communities){
-		console.log(error);
+		console.log(error)
         console.log(csvData);
         console.log(background);
         console.log(communities);
         
         //create graticule
         var graticule = d3.geo.graticule()
-			//place graticule lines every 5 degrees of longitude and latitude
-            .step([0.5, 0.5]);	 
+            .step([0.5, 0.5]); //place graticule lines every 5 degrees of longitude and latitude
         
         //create graticule background
         var gratBackground = map.append("path")
