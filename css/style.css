@@ -3,10 +3,11 @@
 	margin: 10px 0 0 20px;
 }
 
-.regions {
-	stroke: white;
-	stroke-width: 1px;
-	stroke-linecap: round;
+.community {
+	fill: white;
+	stroke: black;
+    stroke-width: 5px;
+    stroke-linecap: round;
 }
 
 .state {
