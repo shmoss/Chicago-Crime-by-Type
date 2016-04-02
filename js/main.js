@@ -5,7 +5,7 @@ window.onload = setMap();
 
 //set our global variables
 var attrArray = ["community", "pop_total", "ass_ind", "burg_ind", "crimSex_ind", "hom_ind", "robb_ind", "ass_rel", "burg_rel", "crimSex_rel", "hom_rel", "robb_rel"]; //list of attributes
-var expressed = attrArray[3]; //initial attribute
+var expressed = attrArray[2]; //initial attribute
 
 //set up the map
 function setMap(){
@@ -68,7 +68,7 @@ function setMap(){
             
 		//join csv data to GeoJSON enumeration units
 		communityAreas = joinData(communityAreas, csvData); 
-		
+		console.log(communityAreas)
 		
 		//create the color scale
 		var colorScale = makeColorScale(csvData);
@@ -111,22 +111,23 @@ function joinData(communityAreas, csvData){
 	for (var i=0; i<csvData.length; i++){
 		var csvRegion = csvData[i]; //the current region
 		var csvKey = csvRegion.community; //the CSV primary key
-
+		console.log(csvKey);
 		//loop through geojson regions to find correct region
 		for (var a=0; a<communityAreas.length; a++){
 
 			var geojsonProps = communityAreas[a].properties; //the current region geojson properties
 			var geojsonKey = geojsonProps.community; //the geojson primary key
-			
-			//where primary keys match, transfer csv data to geojson properties object
-			if (geojsonKey == csvKey){
-
-				//assign all attributes and values
-				attrArray.forEach(function(attr){
-					var val = parseFloat(csvRegion[attr]); //get csv attribute value
-					geojsonProps[attr] = val; //assign attribute and value to geojson properties
-				});
-			};
+			if (geojsonKey != NaN){
+				//where primary keys match, transfer csv data to geojson properties object
+				if (geojsonKey == csvKey){
+	
+					//assign all attributes and values
+					attrArray.forEach(function(attr){
+						var val = parseFloat(csvRegion[attr]); //get csv attribute value
+						geojsonProps[attr] = val; //assign attribute and value to geojson properties
+					});
+				};
+			}
 		};
 	};
 
@@ -135,21 +136,25 @@ function joinData(communityAreas, csvData){
 };
 
 function setEnumerationUnits(communityAreas, map, path, colorScale){
+	console.log("hi")
+	console.log(communityAreas)
 	
-	//add France regions to map
+	//add regions to map
 	var community = map.selectAll(".community")
-		.data(communityAreas)
+		.data(communityAreas)		
 		.enter()
 		.append("path")
 		.attr("class", function(d){
-			console.log("hi")
-			return "community " + d.properties.community;
+			return "community";
+		})
+		.attr('id', function(d){
+			console.log(d.properties.community);
+			return  d.properties.community;
 		})
 		.attr("d", path)
 		.style("fill", function(d){
 			return choropleth(d.properties, colorScale);
 		});
-	
 };
 
 function makeColorScale(data){
