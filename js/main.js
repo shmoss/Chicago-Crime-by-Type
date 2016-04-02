@@ -120,7 +120,7 @@ function joinData(communityAreas, csvData){
 			if (geojsonKey != NaN){
 				//where primary keys match, transfer csv data to geojson properties object
 				if (geojsonKey == csvKey){
-	
+
 					//assign all attributes and values
 					attrArray.forEach(function(attr){
 						var val = parseFloat(csvRegion[attr]); //get csv attribute value
