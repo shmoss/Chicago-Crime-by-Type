@@ -1,12 +1,28 @@
 (function(){
 
-//begin script when window loads
-window.onload = setMap();
-
 //set our global variables
 var attrArray = ["community", "pop_total", "assaults", "burglaries", "sexual assaults", "homicides", "robberies", "ass_rel", "burg_rel", "crimSex_rel", "hom_rel", "robb_rel"]; //list of attributes
 var expressed = attrArray[2]; //initial attribute
 console.log(expressed)
+
+//chart frame dimensions
+var chartWidth = window.innerWidth * 0.425,
+	chartHeight = 473,
+	leftPadding = 35,
+	rightPadding = 2,
+	topBottomPadding = 5,
+	innerWidth = chartWidth - leftPadding - rightPadding,
+	innerHeight = chartHeight - topBottomPadding * 2,
+	translate = "translate(" + leftPadding + "," + topBottomPadding + ")";
+		
+var yScale = d3.scale.linear()
+	.range([463, 0])
+	.domain([0, 200]);
+
+//begin script when window loads
+window.onload = setMap();
+
+
 //set up the map
 function setMap(){
     var width = 960, //dimensions
@@ -77,7 +93,10 @@ function setMap(){
 		//add enumeration units to the map
 		setEnumerationUnits(communityAreas, map, path, colorScale);  
 		
-		setChart(csvData, colorScale);         
+		setChart(csvData, colorScale); 
+		
+		//create dropdown for attribute selection
+		createDropdown(csvData);        
     };
 
 };
@@ -154,6 +173,7 @@ function setEnumerationUnits(communityAreas, map, path, colorScale){
 		.attr("class", function(d){ //assign class here
 			//this will return the name of each community
 			return "community " + d.properties.community;
+
 			
 		})
 		.attr("d", path)
@@ -161,7 +181,7 @@ function setEnumerationUnits(communityAreas, map, path, colorScale){
 			//style applied based on choropleth function
 			return choropleth(d.properties, colorScale);
 		});
-	
+	console.log(community)
 };
 
 function makeColorScale(data){
@@ -215,15 +235,7 @@ function choropleth(props, colorScale){
 
 //creates our bar chart based on csv data and color scale
 function setChart(csvData, colorScale){
-	//chart frame dimensions
-	var chartWidth = window.innerWidth * 0.425,
-		chartHeight = 473,
-		leftPadding = 25,
-		rightPadding = 2,
-		topBottomPadding = 5,
-		innerWidth = chartWidth - leftPadding - rightPadding,
-		innerHeight = chartHeight - topBottomPadding * 2,
-		translate = "translate(" + leftPadding + "," + topBottomPadding + ")";
+
 
 	//create a second svg element to hold the bar chart
 	var chart = d3.select("body")
@@ -298,9 +310,94 @@ function setChart(csvData, colorScale){
 		.attr("width", innerWidth)
 		.attr("height", innerHeight)
 		.attr("transform", translate);
+		
+	//set bar positions, heights, and colors
+    updateChart(bars, csvData.length, colorScale);		
 };          
         
 //end setChart function
 
+//function to create a dropdown menu for attribute selection
+function createDropdown(csvData){
+    //add select element
+    var dropdown = d3.select("body")
+        .append("select")
+        .attr("class", "dropdown")
+        .on("change", function(){
+            changeAttribute(this.value, csvData)
+        });
+
+
+    //add initial option
+    var titleOption = dropdown.append("option")
+        .attr("class", "titleOption")
+        .attr("disabled", "true")
+        .text("Select Attribute");
+
+    //add attribute name options
+    var attrOptions = dropdown.selectAll("attrOptions")
+        .data(attrArray)
+        .enter()
+        .append("option")
+        .attr("value", function(d){ return d })
+        .text(function(d){ return d });
+};
+
+//dropdown change listener handler
+function changeAttribute(attribute, csvData){
+    //change the expressed attribute
+    expressed = attribute;
+
+    //recreate the color scale
+    var colorScale = makeColorScale(csvData);
+
+    //recolor enumeration units
+    var community = d3.selectAll(".community")
+        .style("fill", function(d){
+            return choropleth(d.properties, colorScale)
+        });
+        
+	  //re-sort, resize, and recolor bars
+    var bars = d3.selectAll(".bar")
+        //re-sort bars
+        .sort(function(a, b){
+            return b[expressed] - a[expressed];
+        })
+        .attr("x", function(d, i){
+            return i * (innerWidth / csvData.length) + leftPadding;
+        })
+        //resize bars
+        .attr("height", function(d, i){
+            return 463 - yScale(parseFloat(d[expressed]));
+        })
+        .attr("y", function(d, i){
+            return yScale(parseFloat(d[expressed])) + topBottomPadding;
+        })
+        //recolor bars
+        .style("fill", function(d){
+            return choropleth(d, colorScale);
+        });
+        
+    updateChart(bars, csvData.length, colorScale);        
+};
+
+//function to position, size, and color bars in chart
+function updateChart(bars, n, colorScale){
+    //position bars
+    bars.attr("x", function(d, i){
+            return i * (innerWidth / n) + leftPadding;
+        })
+        //size/resize bars
+        .attr("height", function(d, i){
+            return 463 - yScale(parseFloat(d[expressed]));
+        })
+        .attr("y", function(d, i){
+            return yScale(parseFloat(d[expressed])) + topBottomPadding;
+        })
+        //color/recolor bars
+        .style("fill", function(d){
+            return choropleth(d, colorScale);
+        });
+};
 
 })();
