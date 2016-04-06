@@ -1,3 +1,12 @@
+#header{
+  font-size: 40px;
+  color: black
+  padding: 0;
+  margin: 0;
+  font-family: baskerville;
+}
+
+
 .map {
 	border: 3px solid #999;
 	margin: 10px 0 0 20px;
@@ -24,4 +33,32 @@
 	fill: none;
 	stroke: #999;
 	stroke-width: 1px;
+}
+
+.numbers {
+    fill: white;
+    font-family: baskerville;
+}
+
+.chart {
+	float: right;
+	margin: 7px 20px 0 0;
+}
+
+.chartTitle {
+	font-family: baskerville;
+	font-size: 1.5em;
+	font-weight: bold;
+	
+}
+
+.chartBackground {
+	fill: rgba(128,128,128,.2);
+}
+
+.chartFrame {
+	fill: none;
+	stroke: #999;
+	stroke-width: 3px;
+	shape-rendering: crispEdges;
 }

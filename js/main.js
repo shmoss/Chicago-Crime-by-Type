@@ -4,9 +4,9 @@
 window.onload = setMap();
 
 //set our global variables
-var attrArray = ["community", "pop_total", "ass_ind", "burg_ind", "crimSex_ind", "hom_ind", "robb_ind", "ass_rel", "burg_rel", "crimSex_rel", "hom_rel", "robb_rel"]; //list of attributes
+var attrArray = ["community", "pop_total", "assaults", "burglaries", "sexual assaults", "homicides", "robberies", "ass_rel", "burg_rel", "crimSex_rel", "hom_rel", "robb_rel"]; //list of attributes
 var expressed = attrArray[2]; //initial attribute
-
+console.log(expressed)
 //set up the map
 function setMap(){
     var width = 960, //dimensions
@@ -49,33 +49,38 @@ function setMap(){
 		//place graticule on the map
 		setGraticule(map, path);
 		
-        console.log(csvData);
-        console.log(background);
-        console.log(communities);
+        // console.log(csvData);
+        // console.log(background);
+        // console.log(communities);
         
          
 		
 	   
        var backgroundState = topojson.feature(background, background.objects.Illinois_WGS1984),  //translate community area and Illinois TopoJSON
-		   communityAreas = topojson.feature(communities, communities.objects.commAreas_WGS_1984).features;                       
+		   communityAreas = topojson.feature(communities, communities.objects.commAreas_WGS_1984).features; 
+		                        
         //add Illinois to map
         var state = map.append("path")
             .datum(backgroundState)
             .attr("class", "state")
             .attr("d", path);
      
-
-            
+		
+        //console.log(communityAreas)
 		//join csv data to GeoJSON enumeration units
-		communityAreas = joinData(communityAreas, csvData); 
-		console.log(communityAreas)
+		 communityAreas = joinData(communityAreas, csvData); 
+		
 		
 		//create the color scale
 		var colorScale = makeColorScale(csvData);
 
 		//add enumeration units to the map
-		setEnumerationUnits(communityAreas, map, path, colorScale);           
+		setEnumerationUnits(communityAreas, map, path, colorScale);  
+		
+		setChart(csvData, colorScale);         
     };
+
+};
 
 function setGraticule(map, path){
 		console.log("setGraticule function")
@@ -106,28 +111,31 @@ function setGraticule(map, path){
 };
   
 function joinData(communityAreas, csvData){
-	console.log("yo")
-	//loop through csv to assign each set of csv attribute values to geojson region
+	//loop through csv to assign each set of csv attribute values to geojson community
 	for (var i=0; i<csvData.length; i++){
-		var csvRegion = csvData[i]; //the current region
-		var csvKey = csvRegion.community; //the CSV primary key
-		console.log(csvKey);
-		//loop through geojson regions to find correct region
+		var csvCommunity = csvData[i]; //the current community
+		var csvKey = csvCommunity.community; //the CSV key
+		//loop through geojson regions to find correct community in order to match
 		for (var a=0; a<communityAreas.length; a++){
-
-			var geojsonProps = communityAreas[a].properties; //the current region geojson properties
+			var geojsonProps = communityAreas[a].properties; //the current community geojson properties
 			var geojsonKey = geojsonProps.community; //the geojson primary key
-			if (geojsonKey != NaN){
-				//where primary keys match, transfer csv data to geojson properties object
-				if (geojsonKey == csvKey){
-
-					//assign all attributes and values
-					attrArray.forEach(function(attr){
-						var val = parseFloat(csvRegion[attr]); //get csv attribute value
-						geojsonProps[attr] = val; //assign attribute and value to geojson properties
-					});
-				};
-			}
+			//where keys match, transfer csv data to geojson properties object
+			if (geojsonKey == csvKey){
+				
+				//assign all attributes and values
+				attrArray.forEach(function(attr){					
+					if (attr == "community") {
+						// assign the community name here
+						var val = csvCommunity[attr];
+						//console.log(csvRegion[attr])
+					}
+					else {
+						//here, if the object in the array is NOT "community", we'll parse numberical values
+						var val = parseFloat(csvCommunity[attr]); //get csv attribute value
+					}
+					geojsonProps[attr] = val; //assign attribute and value to geojson properties
+				});
+			};
 		};
 	};
 
@@ -136,34 +144,34 @@ function joinData(communityAreas, csvData){
 };
 
 function setEnumerationUnits(communityAreas, map, path, colorScale){
-	console.log("hi")
-	console.log(communityAreas)
 	
-	//add regions to map
+	
+	//add communities to map
 	var community = map.selectAll(".community")
 		.data(communityAreas)		
 		.enter()
 		.append("path")
-		.attr("class", function(d){
-			return "community";
-		})
-		.attr('id', function(d){
-			console.log(d.properties.community);
-			return  d.properties.community;
+		.attr("class", function(d){ //assign class here
+			//this will return the name of each community
+			return "community " + d.properties.community;
+			
 		})
 		.attr("d", path)
 		.style("fill", function(d){
+			//style applied based on choropleth function
 			return choropleth(d.properties, colorScale);
 		});
+	
 };
 
 function makeColorScale(data){
+	//assign color classes for choropleth
 	var colorClasses = [
-        "#D4B9DA",
-        "#C994C7",
-        "#DF65B0",
-        "#DD1C77",
-        "#980043"
+        "#fee5d9",
+		"#fcae91",
+		"#fb6a4a",
+		"#de2d26",
+		"#a50f15"
     ];
 
     //create color scale generator
@@ -173,6 +181,7 @@ function makeColorScale(data){
     //build array of all values of the expressed attribute
     var domainArray = [];
     for (var i=0; i<data.length; i++){
+    	// use the value of expressed value in array
         var val = parseFloat(data[i][expressed]);
         domainArray.push(val);
     };
@@ -192,7 +201,7 @@ function makeColorScale(data){
     return colorScale;	
 };
 
-//function to test for data value and return color
+//function to look for data value and return color
 function choropleth(props, colorScale){
 	//make sure attribute value is a number
 	var val = parseFloat(props[expressed]);
@@ -204,6 +213,91 @@ function choropleth(props, colorScale){
 	};
 };
 
-};
+//creates our bar chart based on csv data and color scale
+function setChart(csvData, colorScale){
+	//chart frame dimensions
+	var chartWidth = window.innerWidth * 0.425,
+		chartHeight = 473,
+		leftPadding = 25,
+		rightPadding = 2,
+		topBottomPadding = 5,
+		innerWidth = chartWidth - leftPadding - rightPadding,
+		innerHeight = chartHeight - topBottomPadding * 2,
+		translate = "translate(" + leftPadding + "," + topBottomPadding + ")";
+
+	//create a second svg element to hold the bar chart
+	var chart = d3.select("body")
+		.append("svg")
+		.attr("width", chartWidth)
+		.attr("height", chartHeight)
+		.attr("class", "chart");
+
+	//create a rectangle for chart background fill
+	var chartBackground = chart.append("rect")
+		.attr("class", "chartBackground")
+		.attr("width", innerWidth)
+		.attr("height", innerHeight)
+		.attr("transform", translate);
+
+	//create a scale to size bars proportionally to frame and for axis
+	var yScale = d3.scale.linear()
+		.range([463, 0])
+		.domain([0, 200]);
+
+	//set bars for each province
+	var bars = chart.selectAll(".bar")
+		.data(csvData)
+		.enter()
+		.append("rect")
+		.sort(function(a, b){
+			return b[expressed]-a[expressed]
+		})
+		.attr("class", function(d){
+			return "bar " + d.community;
+		})
+		.attr("width", innerWidth / csvData.length - 1)
+		.attr("x", function(d, i){
+			return i * (innerWidth / csvData.length) + leftPadding;
+		})
+		.attr("height", function(d, i){
+			return 463 - yScale(parseFloat(d[expressed]));
+		})
+		.attr("y", function(d, i){
+			return yScale(parseFloat(d[expressed])) + topBottomPadding;
+		})
+		.style("fill", function(d){
+			return choropleth(d, colorScale);
+		});
+
+
+
+	//create a text element for the chart title
+	var chartTitle = chart.append("text")
+		.attr("x", 40)
+		.attr("y", 40)
+		.attr("class", "chartTitle")
+		.text("Number of  " + expressed + " per 10,000 people");
+
+	//create vertical axis generator
+	var yAxis = d3.svg.axis()
+		.scale(yScale)
+		.orient("left");
+
+	//place axis
+	var axis = chart.append("g")
+		.attr("class", "axis")
+		.attr("transform", translate)
+		.call(yAxis);
+
+	//create frame for chart border
+	var chartFrame = chart.append("rect")
+		.attr("class", "chartFrame")
+		.attr("width", innerWidth)
+		.attr("height", innerHeight)
+		.attr("transform", translate);
+};          
+        
+
+
 
 })();
