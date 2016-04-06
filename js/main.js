@@ -230,6 +230,7 @@ function setChart(csvData, colorScale){
 		.append("svg")
 		.attr("width", chartWidth)
 		.attr("height", chartHeight)
+		//assign class
 		.attr("class", "chart");
 
 	//create a rectangle for chart background fill
@@ -249,6 +250,7 @@ function setChart(csvData, colorScale){
 		.data(csvData)
 		.enter()
 		.append("rect")
+		//use d3 method to sort the data based on expressed attribute
 		.sort(function(a, b){
 			return b[expressed]-a[expressed]
 		})
@@ -276,6 +278,7 @@ function setChart(csvData, colorScale){
 		.attr("x", 40)
 		.attr("y", 40)
 		.attr("class", "chartTitle")
+		//use expressed variable in the title
 		.text("Number of  " + expressed + " per 10,000 people");
 
 	//create vertical axis generator
@@ -297,7 +300,7 @@ function setChart(csvData, colorScale){
 		.attr("transform", translate);
 };          
         
-
+//end setChart function
 
 
 })();
