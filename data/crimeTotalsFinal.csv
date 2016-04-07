@@ -1,4 +1,4 @@
-community,pop_total,assaults,burglaries,sexual assaults,homicides,robberies,ass_rel,burg_rel,crimSex_rel,hom_rel,robb_rel
+community,pop_total,Assaults,Burglaries,Sexual assaults,Homicides,Robberies,ass_rel,burg_rel,crimSex_rel,hom_rel,robb_rel
 DOUGLAS,DOUGLAS,100.6,23.7,6.8,1.5,64.8,1.7,0.5,1.5,1,1.9
 OAKLAND,OAKLAND,74,32,2.5,0,28.3,1.3,0.6,0.6,0,0.8
 FULLER PARK,FULLER PARK,150.3,87.9,11.3,2.8,107.7,2.6,1.7,2.6,1.9,3.2

@@ -1,7 +1,7 @@
 (function(){
 
 //set our global variables
-var attrArray = ["community", "pop_total", "assaults", "burglaries", "sexual assaults", "homicides", "robberies", "ass_rel", "burg_rel", "crimSex_rel", "hom_rel", "robb_rel"]; //list of attributes
+var attrArray = ["community", "pop_total", "Assaults", "Burglaries", "Sexual assaults", "Homicides", "Robberies", "ass_rel", "burg_rel", "crimSex_rel", "hom_rel", "robb_rel"]; //list of attributes
 var expressed = attrArray[2]; //initial attribute
 console.log(expressed)
 
@@ -25,7 +25,7 @@ window.onload = setMap();
 
 //set up the map
 function setMap(){
-    var width = 960, //dimensions
+    var width = window.innerWidth * 0.5, //dimensions
         height = 460; //dimensions
 
     //create new svg container for the map
@@ -37,13 +37,13 @@ function setMap(){
 
     //create Albers equal area conic projection centered on Chicago, Illinois
     var projection = d3.geo.albers()
-        .center([0, 41.88]) //set coordinates
+        .center([0, 41.85]) //set coordinates
         //set rotation 
         .rotate([87.623, 0, 0])
         //these are our standard parallels
         .parallels([40, 42])
         //let's make sure we can see Chicago
-        .scale(50000)
+        .scale(62000)
         .translate([width / 2, height / 2]);
         
    //this is our path generator function
@@ -281,7 +281,10 @@ function setChart(csvData, colorScale){
 		})
 		.style("fill", function(d){
 			return choropleth(d, colorScale);
-		});
+		})
+		.on("mouseover", function(d){
+            highlight(d.properties);
+        });
 
 
 
@@ -290,8 +293,7 @@ function setChart(csvData, colorScale){
 		.attr("x", 40)
 		.attr("y", 40)
 		.attr("class", "chartTitle")
-		//use expressed variable in the title
-		.text("Number of  " + expressed + " per 10,000 people");
+
 
 	//create vertical axis generator
 	var yAxis = d3.svg.axis()
@@ -353,6 +355,8 @@ function changeAttribute(attribute, csvData){
 
     //recolor enumeration units
     var community = d3.selectAll(".community")
+    	.transition()
+        .duration(1000)
         .style("fill", function(d){
             return choropleth(d.properties, colorScale)
         });
@@ -363,20 +367,12 @@ function changeAttribute(attribute, csvData){
         .sort(function(a, b){
             return b[expressed] - a[expressed];
         })
-        .attr("x", function(d, i){
-            return i * (innerWidth / csvData.length) + leftPadding;
+        .transition() //add animation
+        .delay(function(d, i){
+            return i * 20
         })
-        //resize bars
-        .attr("height", function(d, i){
-            return 463 - yScale(parseFloat(d[expressed]));
-        })
-        .attr("y", function(d, i){
-            return yScale(parseFloat(d[expressed])) + topBottomPadding;
-        })
-        //recolor bars
-        .style("fill", function(d){
-            return choropleth(d, colorScale);
-        });
+        .duration(500);
+       
         
     updateChart(bars, csvData.length, colorScale);        
 };
@@ -398,6 +394,23 @@ function updateChart(bars, n, colorScale){
         .style("fill", function(d){
             return choropleth(d, colorScale);
         });
+        
+	    //at the bottom of updateChart()...add text to chart title
+    var chartTitle = d3.select(".chartTitle")
+        .text(expressed + " per 10,000 people");        
+};
+
+//function to highlight enumeration units and bars
+//function to highlight enumeration units and bars
+function highlight(props){
+	//change stroke
+	var selected = d3.selectAll("." + props.community)
+		.style({
+			"stroke": "blue",
+			"stroke-width": "2"
+		});
+
+	setLabel(props);
 };
 
 })();

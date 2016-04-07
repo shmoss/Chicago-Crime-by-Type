@@ -20,7 +20,7 @@
 }
 
 .state {
-	fill: grey;
+	fill: #252525;
 	stroke: #CCC;
 	stroke-width: 2px;
 }
@@ -31,7 +31,7 @@
 
 .gratLines {
 	fill: none;
-	stroke: #999;
+	stroke: none;
 	stroke-width: 1px;
 }
 
@@ -41,20 +41,21 @@
 }
 
 .chart {
-	float: right;
-	margin: 7px 20px 0 0;
-	font-size: 1.0em;
+	position:absolute;
+    top: 80px;
+    right: 10px;
 }
 
 .chartTitle {
 	font-family: baskerville;
 	font-size: 1.5em;
 	font-weight: bold;
-	
+	position: absolute;
+	right: 10px;
 }
 
 .chartBackground {
-	fill: rgba(128,128,128,.2);
+	fill: white;
 }
 
 .chartFrame {
@@ -62,6 +63,20 @@
 	stroke: #999;
 	stroke-width: 3px;
 	shape-rendering: crispEdges;
+}
+
+.axis path,
+.axis line {
+	fill: none;
+	stroke: #999;
+	stroke-width: 1px;
+	shape-rendering: crispEdges;
+}
+
+.axis text {
+	font-family: sans-serif;
+	font-size: 0.8em;
+	fill: #999;
 }
 
 .dropdown {
