@@ -1,8 +1,8 @@
 (function(){
 
 //set our global variables
-var attrArray = ["community", "pop_total", "Assaults", "Burglaries", "Sexual assaults", "Homicides", "Robberies", "ass_rel", "burg_rel", "crimSex_rel", "hom_rel", "robb_rel"]; //list of attributes
-var expressed = attrArray[2]; //initial attribute
+var attrArray = ["Assaults", "Burglaries", "Robberies", "Sexual assaults", "Homicides"]; //list of attributes
+var expressed = attrArray[0]; //initial attribute
 console.log(expressed)
 
 //chart frame dimensions
@@ -172,6 +172,7 @@ function setEnumerationUnits(communityAreas, map, path, colorScale){
 		.append("path")
 		.attr("class", function(d){ //assign class here
 			//this will return the name of each community
+			
 			return "community " + d.properties.community;
 
 			
@@ -180,8 +181,16 @@ function setEnumerationUnits(communityAreas, map, path, colorScale){
 		.style("fill", function(d){
 			//style applied based on choropleth function
 			return choropleth(d.properties, colorScale);
-		});
-	console.log(community)
+		})
+		.on("mouseover", function(d){
+        	highlight(d.properties);        	
+		})
+		.on("mouseout", function(d){
+            dehighlight(d.properties);
+       })
+		.on("mousemove", moveLabel)
+	var desc = community.append("desc")
+		.text('{"stroke": "#000", "stroke-width": "0.5px"}');	
 };
 
 function makeColorScale(data){
@@ -270,6 +279,8 @@ function setChart(csvData, colorScale){
 			return "bar " + d.community;
 		})
 		.attr("width", innerWidth / csvData.length - 1)
+		.on("mouseover", highlight)
+		.on("mouseout", dehighlight)
 		.attr("x", function(d, i){
 			return i * (innerWidth / csvData.length) + leftPadding;
 		})
@@ -282,11 +293,11 @@ function setChart(csvData, colorScale){
 		.style("fill", function(d){
 			return choropleth(d, colorScale);
 		})
-		.on("mouseover", function(d){
-            highlight(d.properties);
-        });
+		
 
 
+	var desc = bars.append("desc")
+		.text('{"stroke": "none", "stroke-width": "0px"}');
 
 	//create a text element for the chart title
 	var chartTitle = chart.append("text")
@@ -403,14 +414,92 @@ function updateChart(bars, n, colorScale){
 //function to highlight enumeration units and bars
 //function to highlight enumeration units and bars
 function highlight(props){
-	//change stroke
-	var selected = d3.selectAll("." + props.community)
-		.style({
-			"stroke": "blue",
-			"stroke-width": "2"
-		});
+        // console.log("Highlight");
+        //change stroke
+        var selected = d3.selectAll("." +props.community)
+            .style({
+                "stroke": "black",
+                "stroke-width": "3"
+            });
 
-	setLabel(props);
+		console.log(props.community)
+		setLabel(props);
+    };
+    
+//function to reset the element style on mouseout
+function dehighlight(props){
+    var selected = d3.selectAll("." + props.community)
+        .style({
+            "stroke": function(){
+                return getStyle(this, "stroke")
+            },
+            "stroke-width": function(){
+                return getStyle(this, "stroke-width")
+            }
+            
+        });
+
+    function getStyle(element, styleName){
+        var styleText = d3.select(element)
+            .select("desc")
+            .text();
+
+        var styleObject = JSON.parse(styleText);
+
+        return styleObject[styleName];
+    };
+    
+    	//remove info label
+		d3.select(".infolabel")
+		.remove();
 };
+
+//function to create dynamic label
+function setLabel(props){
+    //label content
+    var labelAttribute = "<h1>" + props[expressed] +
+        "</h1><b>" + expressed + "</b>";
+
+    //create info label div
+    var infolabel = d3.select("body")
+        .append("div")
+        .attr({
+            "class": "infolabel",
+            "id": props.community + "_label"
+        })
+        .html(labelAttribute);
+
+    var communityName = infolabel.append("div")
+        .attr("class", "labelname")
+        .html(props.name);
+ console.log(communityName)       
+};
+
+//function to move info label with mouse
+function moveLabel(){
+	//get width of label
+	var labelWidth = d3.select(".infolabel")
+		.node()
+		.getBoundingClientRect()
+		.width;
+
+	//use coordinates of mousemove event to set label coordinates
+	var x1 = d3.event.clientX + 10,
+		y1 = d3.event.clientY - 75,
+		x2 = d3.event.clientX - labelWidth - 10,
+		y2 = d3.event.clientY + 25;
+
+	//horizontal label coordinate, testing for overflow
+	var x = d3.event.clientX > window.innerWidth - labelWidth - 20 ? x2 : x1;
+	//vertical label coordinate, testing for overflow
+	var y = d3.event.clientY < 75 ? y2 : y1;
+
+	d3.select(".infolabel")
+		.style({
+			"left": x + "px",
+			"top": y + "px"
+		});
+};
+
 
 })();
