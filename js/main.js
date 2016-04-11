@@ -1,8 +1,15 @@
 (function(){
 
+homicideArray = [	"#dadaeb",
+			"#bcbddc",
+			"#9e9ac8",
+			"#756bb1",
+			"#54278f"	];
+
 //set our global variables
-var attrArray = ["Assaults", "Burglaries", "Robberies", "Sexual assaults", "Homicides"]; //list of attributes
+var attrArray = ["Assaults", "Burglaries", "Robberies", "Sexual assaults", "Homicides", "ID"]; //list of attributes
 var expressed = attrArray[0]; //initial attribute
+
 console.log(expressed)
 
 //chart frame dimensions
@@ -93,7 +100,7 @@ function setMap(){
 		//add enumeration units to the map
 		setEnumerationUnits(communityAreas, map, path, colorScale);  
 		
-		setChart(csvData, colorScale); 
+		setChart(csvData, colorScale, expressed); 
 		
 		//create dropdown for attribute selection
 		createDropdown(csvData);        
@@ -134,6 +141,7 @@ function joinData(communityAreas, csvData){
 	for (var i=0; i<csvData.length; i++){
 		var csvCommunity = csvData[i]; //the current community
 		var csvKey = csvCommunity.community; //the CSV key
+		console.log(csvData)
 		//loop through geojson regions to find correct community in order to match
 		for (var a=0; a<communityAreas.length; a++){
 			var geojsonProps = communityAreas[a].properties; //the current community geojson properties
@@ -172,8 +180,10 @@ function setEnumerationUnits(communityAreas, map, path, colorScale){
 		.append("path")
 		.attr("class", function(d){ //assign class here
 			//this will return the name of each community
+			console.log(d.properties.ID)
+			return "community " + d.properties.community + d.properties.ID;
 			
-			return "community " + d.properties.community;
+			
 
 			
 		})
@@ -183,12 +193,13 @@ function setEnumerationUnits(communityAreas, map, path, colorScale){
 			return choropleth(d.properties, colorScale);
 		})
 		.on("mouseover", function(d){
-        	highlight(d.properties);        	
+        	highlight(d.properties) 
+        	console.log(d.properties.ID)       	
 		})
-		.on("mouseout", function(d){
-            dehighlight(d.properties);
-       })
-		.on("mousemove", moveLabel)
+		// .on("mouseout", function(d){
+            // dehighlight(d.properties);
+       // })
+		//.on("mousemove", moveLabel)
 	var desc = community.append("desc")
 		.text('{"stroke": "#000", "stroke-width": "0.5px"}');	
 };
@@ -243,9 +254,9 @@ function choropleth(props, colorScale){
 };
 
 //creates our bar chart based on csv data and color scale
-function setChart(csvData, colorScale){
+function setChart(csvData, colorScale, attribute){
 
-
+var expressed = attribute
 	//create a second svg element to hold the bar chart
 	var chart = d3.select("body")
 		.append("svg")
@@ -260,13 +271,18 @@ function setChart(csvData, colorScale){
 		.attr("width", innerWidth)
 		.attr("height", innerHeight)
 		.attr("transform", translate);
-
+		
+	//get min and max of expressed attribute
+    var min = d3.min(csvData, function(d) { return parseFloat(d[expressed]); });
+    var max = d3.max(csvData, function(d) { return parseFloat(d[expressed]); });	
+	console.log(min)
+	console.log(max)
 	//create a scale to size bars proportionally to frame and for axis
 	var yScale = d3.scale.linear()
 		.range([463, 0])
 		.domain([0, 200]);
 
-	//set bars for each province
+	//set bars for each community
 	var bars = chart.selectAll(".bar")
 		.data(csvData)
 		.enter()
@@ -280,7 +296,7 @@ function setChart(csvData, colorScale){
 		})
 		.attr("width", innerWidth / csvData.length - 1)
 		.on("mouseover", highlight)
-		.on("mouseout", dehighlight)
+		//.on("mouseout", dehighlight)
 		.attr("x", function(d, i){
 			return i * (innerWidth / csvData.length) + leftPadding;
 		})
@@ -360,7 +376,6 @@ function createDropdown(csvData){
 function changeAttribute(attribute, csvData){
     //change the expressed attribute
     expressed = attribute;
-
     //recreate the color scale
     var colorScale = makeColorScale(csvData);
 
@@ -390,6 +405,7 @@ function changeAttribute(attribute, csvData){
 
 //function to position, size, and color bars in chart
 function updateChart(bars, n, colorScale){
+	
     //position bars
     bars.attr("x", function(d, i){
             return i * (innerWidth / n) + leftPadding;
@@ -408,7 +424,18 @@ function updateChart(bars, n, colorScale){
         
 	    //at the bottom of updateChart()...add text to chart title
     var chartTitle = d3.select(".chartTitle")
-        .text(expressed + " per 10,000 people");        
+        .text(expressed + " per 10,000 people");
+        console.log(expressed) 
+  
+	
+        
+     if (expressed == "Homicides") {
+     	console.log("working")
+     	yScale = d3.scale.linear()
+			.range([463, 0])
+			.domain([0, 50]);
+			
+     }      
 };
 
 //function to highlight enumeration units and bars
@@ -416,90 +443,93 @@ function updateChart(bars, n, colorScale){
 function highlight(props){
         // console.log("Highlight");
         //change stroke
-        var selected = d3.selectAll("." +props.community)
+        console.log(selected)
+        console.log(props.ID)
+        var selected = d3.selectAll("." + props.community + props.ID)
             .style({
                 "stroke": "black",
                 "stroke-width": "3"
             });
 
-		console.log(props.community)
-		setLabel(props);
+
+		// setLabel(props);
+
     };
     
 //function to reset the element style on mouseout
-function dehighlight(props){
-    var selected = d3.selectAll("." + props.community)
-        .style({
-            "stroke": function(){
-                return getStyle(this, "stroke")
-            },
-            "stroke-width": function(){
-                return getStyle(this, "stroke-width")
-            }
-            
-        });
-
-    function getStyle(element, styleName){
-        var styleText = d3.select(element)
-            .select("desc")
-            .text();
-
-        var styleObject = JSON.parse(styleText);
-
-        return styleObject[styleName];
-    };
-    
-    	//remove info label
-		d3.select(".infolabel")
-		.remove();
-};
+// function dehighlight(props){
+    // var selected = d3.selectAll("." + props.community)
+        // .style({
+            // "stroke": function(){
+                // return getStyle(this, "stroke")
+            // },
+            // "stroke-width": function(){
+                // return getStyle(this, "stroke-width")
+            // }
+//             
+        // });
+// 
+    // function getStyle(element, styleName){
+        // var styleText = d3.select(element)
+            // .select("desc")
+            // .text();
+// 
+        // var styleObject = JSON.parse(styleText);
+// 
+        // return styleObject[styleName];
+    // };
+//     
+    	// //remove info label
+		// d3.select(".infolabel")
+		// .remove();
+// };
 
 //function to create dynamic label
-function setLabel(props){
-    //label content
-    var labelAttribute = "<h1>" + props[expressed] +
-        "</h1><b>" + expressed + "</b>";
-
-    //create info label div
-    var infolabel = d3.select("body")
-        .append("div")
-        .attr({
-            "class": "infolabel",
-            "id": props.community + "_label"
-        })
-        .html(labelAttribute);
-
-    var communityName = infolabel.append("div")
-        .attr("class", "labelname")
-        .html(props.name);
- console.log(communityName)       
-};
+// function setLabel(props){
+    // //label content
+    // var labelAttribute = "<h1>" + props[expressed] +
+        // "</h1><b>" + expressed + "</b>";
+// 
+    // //create info label div
+    // var infolabel = d3.select("body")
+        // .append("div")
+        // .attr({
+            // "class": "infolabel",
+            // "id": props.community + "_label"
+        // })
+        // .html(labelAttribute);
+// 
+    // var communityName = infolabel.append("div")
+        // .attr("class", "labelname")
+        // .html(props.name);
+ // //console.log(communityName)       
+// };
 
 //function to move info label with mouse
-function moveLabel(){
-	//get width of label
-	var labelWidth = d3.select(".infolabel")
-		.node()
-		.getBoundingClientRect()
-		.width;
-
-	//use coordinates of mousemove event to set label coordinates
-	var x1 = d3.event.clientX + 10,
-		y1 = d3.event.clientY - 75,
-		x2 = d3.event.clientX - labelWidth - 10,
-		y2 = d3.event.clientY + 25;
-
-	//horizontal label coordinate, testing for overflow
-	var x = d3.event.clientX > window.innerWidth - labelWidth - 20 ? x2 : x1;
-	//vertical label coordinate, testing for overflow
-	var y = d3.event.clientY < 75 ? y2 : y1;
-
-	d3.select(".infolabel")
-		.style({
-			"left": x + "px",
-			"top": y + "px"
-		});
-};
+// function moveLabel(){
+	// //get width of label
+	// var labelWidth = d3.select(".infolabel")
+		// .node()
+		// .getBoundingClientRect()
+		// .width;
+// 
+	// //use coordinates of mousemove event to set label coordinates
+	// var x1 = d3.event.clientX + 10,
+		// y1 = d3.event.clientY - 75,
+		// x2 = d3.event.clientX - labelWidth - 10,
+		// y2 = d3.event.clientY + 25;
+// 
+	// //horizontal label coordinate, testing for overflow
+	// var x = d3.event.clientX > window.innerWidth - labelWidth - 20 ? x2 : x1;
+	// //vertical label coordinate, testing for overflow
+	// var y = d3.event.clientY < 75 ? y2 : y1;
+// 
+	// d3.select(".infolabel")
+		// .style({
+			// "left": x + "px",
+			// "top": y + "px"
+		// });
+// };
 
 
 })();

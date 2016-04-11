@@ -19,6 +19,13 @@
     stroke-linecap: round;
 }
 
+.ID {
+	fill: white;
+	stroke: black;
+    stroke-width: 1px;
+    stroke-linecap: round;
+}
+
 .state {
 	fill: #252525;
 	stroke: #CCC;
