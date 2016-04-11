@@ -180,12 +180,8 @@ function setEnumerationUnits(communityAreas, map, path, colorScale){
 		.append("path")
 		.attr("class", function(d){ //assign class here
 			//this will return the name of each community
-			console.log(d.properties.community)
-				return "community " + d.properties.community2 + d.properties.ID;
-			
-			
-
-			
+			console.log(d.properties.ID)
+			return "community_" + d.properties.ID;
 		})
 		.attr("d", path)
 		.style("fill", function(d){
@@ -193,11 +189,13 @@ function setEnumerationUnits(communityAreas, map, path, colorScale){
 			return choropleth(d.properties, colorScale);
 		})
 		.on("mouseover", function(d){
-        	highlight(d.properties);        	
+        	highlight(d.properties); 
+        	//console.log(d.properties)  
+        	console.log(d.properties.ID);     	
 		})
-		.on("mouseout", function(d){
+		 .on("mouseout", function(d){
             dehighlight(d.properties);
-       })
+       	})
 		.on("mousemove", moveLabel)
 	var desc = community.append("desc")
 		.text('{"stroke": "#000", "stroke-width": "0.5px"}');	
@@ -291,7 +289,7 @@ var expressed = attribute
 			return b[expressed]-a[expressed]
 		})
 		.attr("class", function(d){
-			return "bar " + d.community2 + d.ID;
+			return "bar " + "community_" + d.ID;   //"community_" + d.properties.ID;
 		})
 		.attr("width", innerWidth / csvData.length - 1)
 		.on("mouseover", highlight)
@@ -384,6 +382,7 @@ function changeAttribute(attribute, csvData){
         .duration(1000)
         .style("fill", function(d){
             return choropleth(d.properties, colorScale)
+            console.log(d.properties)
         });
         
 	  //re-sort, resize, and recolor bars
@@ -442,20 +441,21 @@ function updateChart(bars, n, colorScale){
 function highlight(props){
         // console.log("Highlight");
         //change stroke
-        var selected = d3.selectAll("." + props.community2 + props.ID)
+        console.log(props.ID)
+        var selected = d3.selectAll(".community_" + props.ID)
             .style({
                 "stroke": "black",
                 "stroke-width": "3"
             });
 
 
-		setLabel(props);
-		console.log(props.ID)
+		 setLabel(props);
+
     };
     
 //function to reset the element style on mouseout
 function dehighlight(props){
-    var selected = d3.selectAll("." + props.community2 + props.ID)
+    var selected = d3.selectAll(".community_" + props.ID)
         .style({
             "stroke": function(){
                 return getStyle(this, "stroke")
@@ -485,7 +485,8 @@ function dehighlight(props){
 function setLabel(props){
     //label content
     var labelAttribute = "<h1>" + props[expressed] +
-        "</h1><b>" + expressed + "</b>";
+        "</h1><b>" + expressed + "</b>" 
+        
 
     //create info label div
     var infolabel = d3.select("body")
