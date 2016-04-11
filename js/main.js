@@ -180,8 +180,8 @@ function setEnumerationUnits(communityAreas, map, path, colorScale){
 		.append("path")
 		.attr("class", function(d){ //assign class here
 			//this will return the name of each community
-			console.log(d.properties.ID)
-			return "community " + d.properties.community + d.properties.ID;
+			console.log(d.properties.community)
+				return "community " + d.properties.community2 + d.properties.ID;
 			
 			
 
@@ -193,13 +193,12 @@ function setEnumerationUnits(communityAreas, map, path, colorScale){
 			return choropleth(d.properties, colorScale);
 		})
 		.on("mouseover", function(d){
-        	highlight(d.properties) 
-        	console.log(d.properties.ID)       	
+        	highlight(d.properties);        	
 		})
-		// .on("mouseout", function(d){
-            // dehighlight(d.properties);
-       // })
-		//.on("mousemove", moveLabel)
+		.on("mouseout", function(d){
+            dehighlight(d.properties);
+       })
+		.on("mousemove", moveLabel)
 	var desc = community.append("desc")
 		.text('{"stroke": "#000", "stroke-width": "0.5px"}');	
 };
@@ -292,11 +291,11 @@ var expressed = attribute
 			return b[expressed]-a[expressed]
 		})
 		.attr("class", function(d){
-			return "bar " + d.community;
+			return "bar " + d.community2 + d.ID;
 		})
 		.attr("width", innerWidth / csvData.length - 1)
 		.on("mouseover", highlight)
-		//.on("mouseout", dehighlight)
+		.on("mouseout", dehighlight)
 		.attr("x", function(d, i){
 			return i * (innerWidth / csvData.length) + leftPadding;
 		})
@@ -443,93 +442,91 @@ function updateChart(bars, n, colorScale){
 function highlight(props){
         // console.log("Highlight");
         //change stroke
-        console.log(selected)
-        console.log(props.ID)
-        var selected = d3.selectAll("." + props.community + props.ID)
+        var selected = d3.selectAll("." + props.community2 + props.ID)
             .style({
                 "stroke": "black",
                 "stroke-width": "3"
             });
 
 
-		// setLabel(props);
-
+		setLabel(props);
+		console.log(props.ID)
     };
     
 //function to reset the element style on mouseout
-// function dehighlight(props){
-    // var selected = d3.selectAll("." + props.community)
-        // .style({
-            // "stroke": function(){
-                // return getStyle(this, "stroke")
-            // },
-            // "stroke-width": function(){
-                // return getStyle(this, "stroke-width")
-            // }
-//             
-        // });
-// 
-    // function getStyle(element, styleName){
-        // var styleText = d3.select(element)
-            // .select("desc")
-            // .text();
-// 
-        // var styleObject = JSON.parse(styleText);
-// 
-        // return styleObject[styleName];
-    // };
-//     
-    	// //remove info label
-		// d3.select(".infolabel")
-		// .remove();
-// };
+function dehighlight(props){
+    var selected = d3.selectAll("." + props.community2 + props.ID)
+        .style({
+            "stroke": function(){
+                return getStyle(this, "stroke")
+            },
+            "stroke-width": function(){
+                return getStyle(this, "stroke-width")
+            }
+            
+        });
+
+    function getStyle(element, styleName){
+        var styleText = d3.select(element)
+            .select("desc")
+            .text();
+
+        var styleObject = JSON.parse(styleText);
+
+        return styleObject[styleName];
+    };
+    
+    	//remove info label
+		d3.select(".infolabel")
+		.remove();
+};
 
 //function to create dynamic label
-// function setLabel(props){
-    // //label content
-    // var labelAttribute = "<h1>" + props[expressed] +
-        // "</h1><b>" + expressed + "</b>";
-// 
-    // //create info label div
-    // var infolabel = d3.select("body")
-        // .append("div")
-        // .attr({
-            // "class": "infolabel",
-            // "id": props.community + "_label"
-        // })
-        // .html(labelAttribute);
-// 
-    // var communityName = infolabel.append("div")
-        // .attr("class", "labelname")
-        // .html(props.name);
- // //console.log(communityName)       
-// };
+function setLabel(props){
+    //label content
+    var labelAttribute = "<h1>" + props[expressed] +
+        "</h1><b>" + expressed + "</b>";
+
+    //create info label div
+    var infolabel = d3.select("body")
+        .append("div")
+        .attr({
+            "class": "infolabel",
+            "id": props.community + "_label"
+        })
+        .html(labelAttribute);
+
+    var communityName = infolabel.append("div")
+        .attr("class", "labelname")
+        .html(props.name);
+ //console.log(communityName)       
+};
 
 //function to move info label with mouse
-// function moveLabel(){
-	// //get width of label
-	// var labelWidth = d3.select(".infolabel")
-		// .node()
-		// .getBoundingClientRect()
-		// .width;
-// 
-	// //use coordinates of mousemove event to set label coordinates
-	// var x1 = d3.event.clientX + 10,
-		// y1 = d3.event.clientY - 75,
-		// x2 = d3.event.clientX - labelWidth - 10,
-		// y2 = d3.event.clientY + 25;
-// 
-	// //horizontal label coordinate, testing for overflow
-	// var x = d3.event.clientX > window.innerWidth - labelWidth - 20 ? x2 : x1;
-	// //vertical label coordinate, testing for overflow
-	// var y = d3.event.clientY < 75 ? y2 : y1;
-// 
-	// d3.select(".infolabel")
-		// .style({
-			// "left": x + "px",
-			// "top": y + "px"
-		// });
-// };
+function moveLabel(){
+	//get width of label
+	var labelWidth = d3.select(".infolabel")
+		.node()
+		.getBoundingClientRect()
+		.width;
+
+	//use coordinates of mousemove event to set label coordinates
+	var x1 = d3.event.clientX + 10,
+		y1 = d3.event.clientY - 75,
+		x2 = d3.event.clientX - labelWidth - 10,
+		y2 = d3.event.clientY + 25;
+
+	//horizontal label coordinate, testing for overflow
+	var x = d3.event.clientX > window.innerWidth - labelWidth - 20 ? x2 : x1;
+	//vertical label coordinate, testing for overflow
+	var y = d3.event.clientY < 75 ? y2 : y1;
+
+	d3.select(".infolabel")
+		.style({
+			"left": x + "px",
+			"top": y + "px"
+		});
+};
 
 
 })();
