@@ -141,7 +141,7 @@ function joinData(communityAreas, csvData){
 	for (var i=0; i<csvData.length; i++){
 		var csvCommunity = csvData[i]; //the current community
 		var csvKey = csvCommunity.community; //the CSV key
-		console.log(csvData)
+		
 		//loop through geojson regions to find correct community in order to match
 		for (var a=0; a<communityAreas.length; a++){
 			var geojsonProps = communityAreas[a].properties; //the current community geojson properties
@@ -180,8 +180,8 @@ function setEnumerationUnits(communityAreas, map, path, colorScale){
 		.append("path")
 		.attr("class", function(d){ //assign class here
 			//this will return the name of each community
-			console.log(d.properties.ID)
-			return "community_" + d.properties.ID;
+			//console.log(d.properties.ID)
+			return "community " + d.properties.ID;
 		})
 		.attr("d", path)
 		.style("fill", function(d){
@@ -191,14 +191,15 @@ function setEnumerationUnits(communityAreas, map, path, colorScale){
 		.on("mouseover", function(d){
         	highlight(d.properties); 
         	//console.log(d.properties)  
-        	console.log(d.properties.ID);     	
+        	//console.log(d.properties.ID);     	
 		})
 		 .on("mouseout", function(d){
             dehighlight(d.properties);
        	})
 		.on("mousemove", moveLabel)
 	var desc = community.append("desc")
-		.text('{"stroke": "#000", "stroke-width": "0.5px"}');	
+		.text('{"stroke": "#000", "stroke-width": "0.5px"}');
+			
 };
 
 function makeColorScale(data){
@@ -375,16 +376,17 @@ function changeAttribute(attribute, csvData){
     expressed = attribute;
     //recreate the color scale
     var colorScale = makeColorScale(csvData);
-
+	
     //recolor enumeration units
-    var community = d3.selectAll(".community")
+    var community = d3.selectAll(".community")   
     	.transition()
         .duration(1000)
         .style("fill", function(d){
+        	console.log("hi");
             return choropleth(d.properties, colorScale)
-            console.log(d.properties)
+            
         });
-        
+        console.log(community)
 	  //re-sort, resize, and recolor bars
     var bars = d3.selectAll(".bar")
         //re-sort bars
@@ -423,17 +425,8 @@ function updateChart(bars, n, colorScale){
 	    //at the bottom of updateChart()...add text to chart title
     var chartTitle = d3.select(".chartTitle")
         .text(expressed + " per 10,000 people");
-        console.log(expressed) 
-  
-	
         
-     if (expressed == "Homicides") {
-     	console.log("working")
-     	yScale = d3.scale.linear()
-			.range([463, 0])
-			.domain([0, 50]);
-			
-     }      
+       
 };
 
 //function to highlight enumeration units and bars
@@ -441,8 +434,8 @@ function updateChart(bars, n, colorScale){
 function highlight(props){
         // console.log("Highlight");
         //change stroke
-        console.log(props.ID)
-        var selected = d3.selectAll(".community_" + props.ID)
+        
+        var selected = d3.selectAll(".community_" +props.ID)
             .style({
                 "stroke": "black",
                 "stroke-width": "3"
