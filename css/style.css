@@ -2,17 +2,12 @@ body {
     background-color: #151515;    
 }
 
-
 #page-header{
 margin-left: 5px;
 color: white;
 width: 600px;
-
-}
-
-.page-header h1 {
-fill: white;
-
+line-height: 1.5;
+font-family: baskerville;
 }
 
 .map {
@@ -22,31 +17,14 @@ fill: white;
 
 .community {
 	fill: white;
-	stroke: black;
+	stroke: #3f3f3f;
     stroke-width: 1px;
     stroke-linecap: round;
 }
 
 
-
-.state {
-	fill: #252525;
-	stroke: #CCC;
-	stroke-width: 2px;
-}
-
-.gratBackground {
-	fill: #D5E3FF;
-}
-
-.gratLines {
-	fill: none;
-	stroke: none;
-	stroke-width: 1px;
-}
-
 .numbers {
-    fill: white;
+    fill: #f1f1f1;
     font-family: baskerville;
 }
 
@@ -66,23 +44,20 @@ fill: white;
 }
 
 .chartBackground {
-	fill: #151515;
-	
+	fill: #151515;	
 }
 
 .chartFrame {
 	fill: none;
 	stroke: #151515;
-	stroke-width: 3px;
-	border-radius: 20px;
+	stroke-width: 3px;	
 }
 
 .axis path,
 .axis line {
 	fill: none;
 	stroke: #FFF;
-	stroke-width: 1px;
-	shape-rendering: crispEdges;
+	stroke-width: 2px;	
 }
 
 .axis text {
@@ -93,8 +68,8 @@ fill: white;
 
 .dropdown {
     position: absolute;
-    top: 270px;
-    left: 40px;
+    top: 322px;
+    left: 360px;
     z-index: 10;
     font-family: baskerville;
     font-size: 1em;
@@ -132,7 +107,6 @@ option {
     margin-left: 5px
     margin-bottom: 100cm;
 }
-
 
 .infoText {
     color: #f1f1f1;

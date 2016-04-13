@@ -1,10 +1,5 @@
 (function(){
 
-homicideArray = [	"#dadaeb",
-			"#bcbddc",
-			"#9e9ac8",
-			"#756bb1",
-			"#54278f"	];
 
 //set our global variables
 var attrArray = ["Assaults", "Burglaries", "Robberies", "Sexual assaults", "Homicides"]; //list of attributes
@@ -67,34 +62,21 @@ function setMap(){
 
     //once data loaded, callback function
     //takes 4 parameters (including the above three data sources) 
-	function callback(error, csvData, background, communities){
-		
-		//place graticule on the map
-		//setGraticule(map, path);
-		
-        // console.log(csvData);
-        // console.log(background);
-        // console.log(communities);
-        
-         
-		
+	function callback(error, csvData, background, communities){				
 	   
        var communityAreas = topojson.feature(communities, communities.objects.commAreas_WGS_1984).features;
-		    
-		                        
-
-		
+		    		
         //console.log(communityAreas)
 		//join csv data to GeoJSON enumeration units
 		 communityAreas = joinData(communityAreas, csvData); 
-		
-		
+				
 		//create the color scale
 		var colorScale = makeColorScale(csvData);
 
 		//add enumeration units to the map
 		setEnumerationUnits(communityAreas, map, path, colorScale);  
 		
+		//create chart
 		setChart(csvData, colorScale, expressed); 
 		
 		//create dropdown for attribute selection
@@ -105,34 +87,6 @@ function setMap(){
 
 };
 
-// function setGraticule(map, path){
-		// console.log("setGraticule function")
-		// //create graticule
-        // var graticule = d3.geo.graticule()
-            // .step([0.5, 0.5]); //place graticule lines every 5 degrees of longitude and latitude
-//         
-        // //create graticule background
-        // var gratBackground = map.append("path")
-            // .datum(graticule.outline()) //bind graticule background
-            // //assign class for styling
-            // .attr("class", "gratBackground") 
-            // //project graticule
-            // .attr("d", path) 
-//         
-        // //create graticule lines
-        // //select graticule elements that will be created
-        // var gratLines = map.selectAll(".gratLines") 
-            // .data(graticule.lines()) //bind graticule lines to each element to be created
-            // //create an element for each datum 
-            // .enter() 
-            // //append each element to the svg as a path element
-            // .append("path") 
-            // //assign class for styling
-            // .attr("class", "gratLines") 
-            // //project graticule lines
-            // .attr("d", path);
-// };
-  
 function joinData(communityAreas, csvData){
 	//loop through csv to assign each set of csv attribute values to geojson community
 	for (var i=0; i<csvData.length; i++){
@@ -144,8 +98,7 @@ function joinData(communityAreas, csvData){
 			var geojsonProps = communityAreas[a].properties; //the current community geojson properties
 			var geojsonKey = geojsonProps.community; //the geojson primary key
 			//where keys match, transfer csv data to geojson properties object
-			if (geojsonKey == csvKey){
-				
+			if (geojsonKey == csvKey){				
 				//assign all attributes and values
 				attrArray.forEach(function(attr){					
 					if (attr == "community") {
@@ -167,9 +120,8 @@ function joinData(communityAreas, csvData){
 	
 };
 
-function setEnumerationUnits(communityAreas, map, path, colorScale){
-	
-	
+//create initial community area choropleth
+function setEnumerationUnits(communityAreas, map, path, colorScale){		
 	//add communities to map
 	var community = map.selectAll(".community")
 		.data(communityAreas)		
@@ -177,7 +129,6 @@ function setEnumerationUnits(communityAreas, map, path, colorScale){
 		.append("path")
 		.attr("class", function(d){ //assign class here
 			//this will return the name of each community
-			//console.log(d.properties.ID)
 			return "community community_" + d.properties.area_numbe;
 		})
 		.attr("d", path)
@@ -185,20 +136,22 @@ function setEnumerationUnits(communityAreas, map, path, colorScale){
 			//style applied based on choropleth function
 			return choropleth(d.properties, colorScale);
 		})
+		//mousing over will call highlight function
 		.on("mouseover", function(d){
-        	highlight(d.properties); 
-        	//console.log(d.properties)  
-        	//console.log(d.properties.ID);     	
+        	highlight(d.properties);     	
 		})
+		//mousing off will call dehighlight function
 		 .on("mouseout", function(d){
             dehighlight(d.properties);
        	})
+       	//mousing over will also call moveLabel function
 		.on("mousemove", moveLabel)
 	var desc = community.append("desc")
-		.text('{"stroke": "#000", "stroke-width": "0.5px"}');
+		.text('{"stroke": "#3f3f3f", "stroke-width": "1px"}');
 			
 };
 
+//make colors
 function makeColorScale(data){
 	//assign color classes for choropleth
 	var colorClasses = [
@@ -240,7 +193,7 @@ function makeColorScale(data){
 function choropleth(props, colorScale){
 	//make sure attribute value is a number
 	var val = parseFloat(props[expressed]);
-	//if attribute value exists, assign a color; otherwise assign gray
+	//if attribute value exists, assign a color; otherwise assign default (will work for when data = 0)
 	if (val && val != NaN){
 		return colorScale(val);
 	} else {
@@ -287,9 +240,10 @@ var expressed = attribute
 			return b[expressed]-a[expressed]
 		})
 		.attr("class", function(d){
-			return "bar " + "community_" + d.area_numbe;   //"community_" + d.properties.ID;
+			return "bar " + "community_" + d.area_numbe;   
 		})
 		.attr("width", innerWidth / csvData.length - 1)
+		//listener events which will call highlight, etc
 		.on("mouseover", highlight)
 		.on("mouseout", dehighlight)
 		.on("mousemove", moveLabel)
@@ -305,18 +259,16 @@ var expressed = attribute
 		.style("fill", function(d){
 			return choropleth(d, colorScale);
 		})
-		
-
-
+	
+	//set the default so we know what to return to upon dehighlight	
 	var desc = bars.append("desc")
 		.text('{"stroke": "none", "stroke-width": "0px"}');
 
 	//create a text element for the chart title
 	var chartTitle = chart.append("text")
-		.attr("x", 40)
+		.attr("x", 55)
 		.attr("y", 40)
 		.attr("class", "chartTitle")
-
 
 	//create vertical axis generator
 	var yAxis = d3.svg.axis()
@@ -352,12 +304,11 @@ function createDropdown(csvData){
             changeAttribute(this.value, csvData)
         });
 
-
     //add initial option
     var titleOption = dropdown.append("option")
         .attr("class", "titleOption")
         .attr("disabled", "true")
-        .text("Select Attribute");
+        .text("Select Crime Type");
 
     //add attribute name options
     var attrOptions = dropdown.selectAll("attrOptions")
@@ -396,8 +347,7 @@ function changeAttribute(attribute, csvData){
             return i * 20
         })
         .duration(500);
-       
-        
+           
     updateChart(bars, csvData.length, colorScale);        
 };
 
@@ -423,29 +373,25 @@ function updateChart(bars, n, colorScale){
 	    //at the bottom of updateChart()...add text to chart title
     var chartTitle = d3.select(".chartTitle")
         .text(expressed + " per 10,000 people");
-        
-       
+               
 };
 
 //function to highlight enumeration units and bars
-//function to highlight enumeration units and bars
 function highlight(props){
-        // console.log("Highlight");
-        //change stroke
-        
+        //change stroke here by selecting all communities        
         var selected = d3.selectAll(".community_" +props.area_numbe)
             .style({
                 "stroke": "yellow",
                 "stroke-width": "3"
             });
-
-
+            
 		 setLabel(props);
-
+		 
     };
     
 //function to reset the element style on mouseout
 function dehighlight(props){
+	//do a selection
     var selected = d3.selectAll(".community_" + props.area_numbe)
         .style({
             "stroke": function(){
@@ -456,7 +402,7 @@ function dehighlight(props){
             }
             
         });
-
+	//select our descriptor style
     function getStyle(element, styleName){
         var styleText = d3.select(element)
             .select("desc")
@@ -472,13 +418,12 @@ function dehighlight(props){
 		.remove();
 };
 
-//function to create dynamic label
+//function to create label
 function setLabel(props){
     //label content
     var labelAttribute = "<h3>" + props.community +
         "</h3><b>" + props[expressed] + " " + expressed + "</b>" + "<br>" 
         
-
     //create info label div
     var infolabel = d3.select("body")
         .append("div")
@@ -491,7 +436,7 @@ function setLabel(props){
     var communityName = infolabel.append("div")
         .attr("class", "labelname")
         .html(props.name);
- //console.log(communityName)       
+      
 };
 
 //function to move info label with mouse
@@ -520,16 +465,16 @@ function moveLabel(){
 		});
 };
 
+//inspiration from Robin's Maternity Map..  add metadata at bottom
 function about() {
 
 	var about = d3.select("body")
 		.append("div")
 		.attr("class", "info")
-		.html("About: <br>")
 		.append("div")
 		.html(
-			"Created by Starr Moss <br>"
-			+"Brief writeup of the project on my portfolio, <a href='http://tolomaps.com/portfolio/modern-motherhood-a-world-of-struggle/'>here</a>.")
+			"Created by Starr Moss, 2016 <br>"
+			+"Crime data based on 2015, the most recent dataset")
 		.attr("class", "infoText");
 
 	var sources = d3.select(".info")
@@ -539,4 +484,5 @@ function about() {
 		.attr("class", "sources")
 }
 
+//end
 })();
