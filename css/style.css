@@ -2,12 +2,9 @@ body {
     background-color: black;    
 }
 
-#header{
-  font-size: 40px;
-  color: black
-  padding: 0;
-  margin: 0;
-  font-family: baskerville;
+
+.page-header{
+margin-left: 10px;
 }
 
 
@@ -103,20 +100,15 @@ option {
 }
 
 .infolabel {
-	position: absolute;
-	height: 50px;
-	min-width: 100px;
-	color: #fff;
-	background-color: #000;
-	border: solid thin #fff;
-	padding: 5px 10px;
-	top: -75px;
-	font-family: baskerville;
+    font-family: Baskerville; 
+    position: absolute;
+    text-align: center;
+    min-height: 70px;
+    min-width: 100px;
+    color: #fff;
+    background-color: rgba(51,51,51,.85);
+    border: solid thin black;
+    padding: 5px 10px 10px 5px;
+    top: -75px;
 }
 
-.infolabel h1 {
-	margin: 0 10px 0 0;
-	padding: 0;
-	display: inline-block;
-	line-height: 1em;
-}

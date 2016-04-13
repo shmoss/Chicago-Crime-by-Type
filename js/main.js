@@ -7,7 +7,7 @@ homicideArray = [	"#dadaeb",
 			"#54278f"	];
 
 //set our global variables
-var attrArray = ["Assaults", "Burglaries", "Robberies", "Sexual assaults", "Homicides", "ID"]; //list of attributes
+var attrArray = ["Assaults", "Burglaries", "Robberies", "Sexual assaults", "Homicides"]; //list of attributes
 var expressed = attrArray[0]; //initial attribute
 
 console.log(expressed)
@@ -181,7 +181,7 @@ function setEnumerationUnits(communityAreas, map, path, colorScale){
 		.attr("class", function(d){ //assign class here
 			//this will return the name of each community
 			//console.log(d.properties.ID)
-			return "community " + d.properties.ID;
+			return "community " + d.properties.area_numbe;
 		})
 		.attr("d", path)
 		.style("fill", function(d){
@@ -290,7 +290,7 @@ var expressed = attribute
 			return b[expressed]-a[expressed]
 		})
 		.attr("class", function(d){
-			return "bar " + "community_" + d.ID;   //"community_" + d.properties.ID;
+			return "bar " + "community_" + d.area_numbe;   //"community_" + d.properties.ID;
 		})
 		.attr("width", innerWidth / csvData.length - 1)
 		.on("mouseover", highlight)
@@ -436,7 +436,7 @@ function highlight(props){
         // console.log("Highlight");
         //change stroke
         
-        var selected = d3.selectAll(".community_" +props.ID)
+        var selected = d3.selectAll(".community_" +props.area_numbe)
             .style({
                 "stroke": "black",
                 "stroke-width": "3"
@@ -449,7 +449,7 @@ function highlight(props){
     
 //function to reset the element style on mouseout
 function dehighlight(props){
-    var selected = d3.selectAll(".community_" + props.ID)
+    var selected = d3.selectAll(".community_" + props.area_numbe)
         .style({
             "stroke": function(){
                 return getStyle(this, "stroke")
@@ -478,8 +478,8 @@ function dehighlight(props){
 //function to create dynamic label
 function setLabel(props){
     //label content
-    var labelAttribute = "<h1>" + props[expressed] +
-        "</h1><b>" + expressed + " per 10,000 people" + "</b>" + "<br>" + props.community 
+    var labelAttribute = "<h3>" + props.community +
+        "</h3><b>" + props[expressed] + " " + expressed + "</b>" + "<br>" 
         
 
     //create info label div
