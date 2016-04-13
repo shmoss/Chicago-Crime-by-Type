@@ -247,7 +247,7 @@ function choropleth(props, colorScale){
 	if (val && val != NaN){
 		return colorScale(val);
 	} else {
-		return "#CCC";
+		return "#FFF";
 	};
 };
 
@@ -295,6 +295,7 @@ var expressed = attribute
 		.attr("width", innerWidth / csvData.length - 1)
 		.on("mouseover", highlight)
 		.on("mouseout", dehighlight)
+		.on("mousemove", moveLabel)
 		.attr("x", function(d, i){
 			return i * (innerWidth / csvData.length) + leftPadding;
 		})
@@ -478,7 +479,7 @@ function dehighlight(props){
 function setLabel(props){
     //label content
     var labelAttribute = "<h1>" + props[expressed] +
-        "</h1><b>" + expressed + "</b>" 
+        "</h1><b>" + expressed + " per 10,000 people" + "</b>" + "<br>" + props.community 
         
 
     //create info label div
