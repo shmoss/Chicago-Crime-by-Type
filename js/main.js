@@ -324,11 +324,8 @@ function changeAttribute(attribute, csvData){
     	.transition()
         .duration(1000)
         .style("fill", function(d){
-        	console.log(d.properties);
-            return choropleth(d.properties, colorScale)
-            
+            return choropleth(d.properties, colorScale)            
         });
-        console.log(community)
 	  //re-sort, resize, and recolor bars
     var bars = d3.selectAll(".bar")
         //re-sort bars
@@ -467,7 +464,7 @@ function about() {
 		.append("div")
 		.html(
 			"Created by Starr Moss, 2016 <br>"
-			+"Crime data based on 2015, the most recent dataset")
+			+"All crime data based on 2015")
 		.attr("class", "infoText");
 
 	var sources = d3.select(".info")
