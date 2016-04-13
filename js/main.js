@@ -5,8 +5,6 @@
 var attrArray = ["Assaults", "Burglaries", "Robberies", "Sexual assaults", "Homicides"]; //list of attributes
 var expressed = attrArray[0]; //initial attribute
 
-console.log(expressed)
-
 //chart frame dimensions
 var chartWidth = window.innerWidth * 0.425,
 	chartHeight = 473,
@@ -220,11 +218,6 @@ var expressed = attribute
 		.attr("height", innerHeight)
 		.attr("transform", translate);
 		
-	//get min and max of expressed attribute
-    var min = d3.min(csvData, function(d) { return parseFloat(d[expressed]); });
-    var max = d3.max(csvData, function(d) { return parseFloat(d[expressed]); });	
-	console.log(min)
-	console.log(max)
 	//create a scale to size bars proportionally to frame and for axis
 	var yScale = d3.scale.linear()
 		.range([463, 0])
