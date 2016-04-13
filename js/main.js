@@ -50,7 +50,7 @@ function setMap(){
         //these are our standard parallels
         .parallels([40, 42])
         //let's make sure we can see Chicago
-        .scale(62000)
+        .scale(68000)
         .translate([width / 2, height / 2]);
         
    //this is our path generator function
@@ -70,7 +70,7 @@ function setMap(){
 	function callback(error, csvData, background, communities){
 		
 		//place graticule on the map
-		setGraticule(map, path);
+		//setGraticule(map, path);
 		
         // console.log(csvData);
         // console.log(background);
@@ -79,15 +79,10 @@ function setMap(){
          
 		
 	   
-       var backgroundState = topojson.feature(background, background.objects.Illinois_WGS1984),  //translate community area and Illinois TopoJSON
-		   communityAreas = topojson.feature(communities, communities.objects.commAreas_WGS_1984).features; 
+       var communityAreas = topojson.feature(communities, communities.objects.commAreas_WGS_1984).features;
+		    
 		                        
-        //add Illinois to map
-        var state = map.append("path")
-            .datum(backgroundState)
-            .attr("class", "state")
-            .attr("d", path);
-     
+
 		
         //console.log(communityAreas)
 		//join csv data to GeoJSON enumeration units
@@ -103,38 +98,40 @@ function setMap(){
 		setChart(csvData, colorScale, expressed); 
 		
 		//create dropdown for attribute selection
-		createDropdown(csvData);        
+		createDropdown(csvData);
+		
+		about();        
     };
 
 };
 
-function setGraticule(map, path){
-		console.log("setGraticule function")
-		//create graticule
-        var graticule = d3.geo.graticule()
-            .step([0.5, 0.5]); //place graticule lines every 5 degrees of longitude and latitude
-        
-        //create graticule background
-        var gratBackground = map.append("path")
-            .datum(graticule.outline()) //bind graticule background
-            //assign class for styling
-            .attr("class", "gratBackground") 
-            //project graticule
-            .attr("d", path) 
-        
-        //create graticule lines
-        //select graticule elements that will be created
-        var gratLines = map.selectAll(".gratLines") 
-            .data(graticule.lines()) //bind graticule lines to each element to be created
-            //create an element for each datum 
-            .enter() 
-            //append each element to the svg as a path element
-            .append("path") 
-            //assign class for styling
-            .attr("class", "gratLines") 
-            //project graticule lines
-            .attr("d", path);
-};
+// function setGraticule(map, path){
+		// console.log("setGraticule function")
+		// //create graticule
+        // var graticule = d3.geo.graticule()
+            // .step([0.5, 0.5]); //place graticule lines every 5 degrees of longitude and latitude
+//         
+        // //create graticule background
+        // var gratBackground = map.append("path")
+            // .datum(graticule.outline()) //bind graticule background
+            // //assign class for styling
+            // .attr("class", "gratBackground") 
+            // //project graticule
+            // .attr("d", path) 
+//         
+        // //create graticule lines
+        // //select graticule elements that will be created
+        // var gratLines = map.selectAll(".gratLines") 
+            // .data(graticule.lines()) //bind graticule lines to each element to be created
+            // //create an element for each datum 
+            // .enter() 
+            // //append each element to the svg as a path element
+            // .append("path") 
+            // //assign class for styling
+            // .attr("class", "gratLines") 
+            // //project graticule lines
+            // .attr("d", path);
+// };
   
 function joinData(communityAreas, csvData){
 	//loop through csv to assign each set of csv attribute values to geojson community
@@ -181,7 +178,7 @@ function setEnumerationUnits(communityAreas, map, path, colorScale){
 		.attr("class", function(d){ //assign class here
 			//this will return the name of each community
 			//console.log(d.properties.ID)
-			return "community " + d.properties.area_numbe;
+			return "community community_" + d.properties.area_numbe;
 		})
 		.attr("d", path)
 		.style("fill", function(d){
@@ -383,7 +380,7 @@ function changeAttribute(attribute, csvData){
     	.transition()
         .duration(1000)
         .style("fill", function(d){
-        	console.log("hi");
+        	console.log(d.properties);
             return choropleth(d.properties, colorScale)
             
         });
@@ -438,7 +435,7 @@ function highlight(props){
         
         var selected = d3.selectAll(".community_" +props.area_numbe)
             .style({
-                "stroke": "black",
+                "stroke": "yellow",
                 "stroke-width": "3"
             });
 
@@ -507,7 +504,7 @@ function moveLabel(){
 
 	//use coordinates of mousemove event to set label coordinates
 	var x1 = d3.event.clientX + 10,
-		y1 = d3.event.clientY - 75,
+		y1 = d3.event.clientY - 50,
 		x2 = d3.event.clientX - labelWidth - 10,
 		y2 = d3.event.clientY + 25;
 
@@ -523,5 +520,23 @@ function moveLabel(){
 		});
 };
 
+function about() {
+
+	var about = d3.select("body")
+		.append("div")
+		.attr("class", "info")
+		.html("About: <br>")
+		.append("div")
+		.html(
+			"Created by Starr Moss <br>"
+			+"Brief writeup of the project on my portfolio, <a href='http://tolomaps.com/portfolio/modern-motherhood-a-world-of-struggle/'>here</a>.")
+		.attr("class", "infoText");
+
+	var sources = d3.select(".info")
+		.append("text")
+		.html(
+			"<br><br><sup>[1]</sup>Data on what constitutes a violent crime is from the FBI: <a href='https://www.fbi.gov/about-us/cjis/ucr/crime-in-the-u.s/2011/crime-in-the-u.s.-2011/violent-crime/violent-crime' target='_blank'>Uniform Crime Reports</a>"+"<br>"+"<sup>[2]</sup>Community-level crime data is from the <a href='https://data.cityofchicago.org/'</a>Chicago Data Portal")
+		.attr("class", "sources")
+}
 
 })();

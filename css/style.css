@@ -1,15 +1,22 @@
 body {
-    background-color: black;    
+    background-color: #151515;    
 }
 
 
-.page-header{
-margin-left: 10px;
+#page-header{
+margin-left: 5px;
+color: white;
+width: 600px;
+
 }
 
+.page-header h1 {
+fill: white;
+
+}
 
 .map {
-	border: 3px solid #999;
+	border: black;
 	margin: 10px 0 0 20px;
 }
 
@@ -45,46 +52,48 @@ margin-left: 10px;
 
 .chart {
 	position:absolute;
-    top: 80px;
-    right: 10px;
+    top: 120px;
+    right: 5px;
 }
 
 .chartTitle {
 	font-family: baskerville;
 	font-size: 1.5em;
 	font-weight: bold;
-	position: absolute;
+	text-align: right;
 	right: 10px;
+	fill: #f1f1f1
 }
 
 .chartBackground {
-	fill: white;
+	fill: #151515;
+	
 }
 
 .chartFrame {
 	fill: none;
-	stroke: #999;
+	stroke: #151515;
 	stroke-width: 3px;
-	shape-rendering: crispEdges;
+	border-radius: 20px;
 }
 
 .axis path,
 .axis line {
 	fill: none;
-	stroke: #999;
+	stroke: #FFF;
 	stroke-width: 1px;
 	shape-rendering: crispEdges;
 }
 
 .axis text {
-	font-family: sans-serif;
+	font-family: baskerville;
 	font-size: 0.8em;
-	fill: #999;
+	fill: #FFF;
 }
 
 .dropdown {
     position: absolute;
-    top: 100px;
+    top: 270px;
     left: 40px;
     z-index: 10;
     font-family: baskerville;
@@ -112,3 +121,25 @@ option {
     top: -75px;
 }
 
+.info {
+   	width: 500px;
+   	bottom: 30px;
+    font-family: Baskerville;
+    font-size: 20px;
+    font-weight: normal;
+    color: #f1f1f1;
+    margin: 0% 10% 1% 75%
+    margin-left: 5px
+    margin-bottom: 100cm;
+}
+
+
+.infoText {
+    color: #f1f1f1;
+    font-size: 16px;
+}
+
+.sources {
+    font-size: 14px;
+    color: #f1f1f1;
+}
