@@ -6,13 +6,16 @@ body {
 margin-left: 5px;
 color: white;
 width: 600px;
-line-height: 1.5;
+line-height: 1.25;
 font-family: baskerville;
 }
 
 .map {
 	border: black;
-	margin: 10px 0 0 20px;
+	margin: 10px 0 0 5px;
+	position: relative;
+    bottom: 50px;
+    left: 10px;
 }
 
 .community {
@@ -29,9 +32,9 @@ font-family: baskerville;
 }
 
 .chart {
-	position:absolute;
     top: 120px;
     right: 5px;
+    position: absolute
 }
 
 .chartTitle {
@@ -106,14 +109,18 @@ option {
     margin: 0% 10% 1% 75%
     margin-left: 5px
     margin-bottom: 100cm;
+    position: relative;
+    bottom: 50px
 }
 
 .infoText {
     color: #f1f1f1;
-    font-size: 16px;
+    font-size: 16px;  
 }
 
 .sources {
     font-size: 14px;
     color: #f1f1f1;
+    position: relative;
+    bottom: 30px;
 }

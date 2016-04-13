@@ -27,8 +27,8 @@ window.onload = setMap();
 
 //set up the map
 function setMap(){
-    var width = window.innerWidth * 0.5, //dimensions
-        height = 460; //dimensions
+    var width = window.innerWidth * 0.55, //dimensions
+        height = 550; //dimensions
 
     //create new svg container for the map
     var map = d3.select("body")
@@ -45,7 +45,7 @@ function setMap(){
         //these are our standard parallels
         .parallels([40, 42])
         //let's make sure we can see Chicago
-        .scale(68000)
+        .scale(79000)
         .translate([width / 2, height / 2]);
         
    //this is our path generator function
