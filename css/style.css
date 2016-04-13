@@ -33,7 +33,7 @@ font-family: baskerville;
 
 .chart {
     top: 120px;
-    right: 25px;
+    right: 48px;
     position: absolute
 }
 
@@ -71,7 +71,7 @@ font-family: baskerville;
 
 .dropdown {
     position: absolute;
-    top: 300px;
+    top: 280px;
     left: 390px;
     z-index: 10;
     font-family: baskerville;
